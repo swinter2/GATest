@@ -1,0 +1,99 @@
+﻿@{
+    Layout = null;
+    var title = "Google Analytics Test Page";
+    var endDate = DateTime.Now.Date;
+    var startDate = endDate.AddMonths(-1);
+}
+
+<!DOCTYPE html>
+
+<html ng-app="gaApp">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@title</title>
+    
+    <link href="~/Content/styles/stylesheets/screen.css" rel="stylesheet" />
+    <link href="~/Content/themes/base/minified/jquery-ui.min.css" rel="stylesheet" />
+</head>
+    <body>
+        <div class="container">
+            
+            <h1>@title</h1>
+
+            <div id="analyticsController" ng-controller="Analytics">
+                
+                <div id="errors">
+                    <p class="error" ng-show="error">{{ error }}</p>
+                </div>
+                
+                <div id="console">
+                    <fieldset>
+                        <legend>Console</legend>
+                    
+                        <textarea readonly>{{ output }}</textarea>
+
+                    </fieldset>
+                </div> 
+                <div id="form">
+                    <fieldset>
+                        <legend>App Auth</legend>
+                        <p>
+                            <span ng-show="username">Currently logged in as {{ username }}</span>
+                            <span ng-show="!username">Not currently logged in with a Google Account.</span>
+                        </p>
+                        <p>
+                            <label>Client ID: </label>
+                            <input type="text" ng-model="clientId"/>
+                        </p>
+                        <p>
+                            <label>API Key: </label>
+                            <input type="text" ng-model="apiKey"/>
+                        </p>
+                        <p>
+                            <label>Tracking Code: </label>
+                            <input type="text" ng-model="trackingCode"/>
+                        </p>
+                        <p>
+                            <label>Start Date: </label>
+                            <input class="datepicker" type="text" ng-model="startDate" data-value="@startDate.ToString("d")"/>
+                            <label>End Date: </label>
+                            <input class="datepicker" type="text" ng-model="endDate" data-value="@endDate.ToString("d")"/>
+                        </p>
+                        <p>
+                            <button ng-click="fetchData()">Fetch Results</button>
+                        </p>
+                    </fieldset>
+                </div>
+
+                <div id="results" ng-show="results && results.rows.length > 0">
+                    <h2>Results</h2>
+                    
+                    <table class="data">
+                        <thead>
+                            <tr>
+                                <th ng-repeat="header in results.columnHeaders">{{ header.name }}</th>    
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="row in results.rows" class="{{ $last ? 'last' : '' }} {{ $even ? 'even' : 'odd' }}">
+                                <td ng-repeat="prop in row">{{ prop }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    @*<textarea>{{ results.rows }}</textarea>*@
+                </div>
+            </div>
+            
+        </div>
+    
+        <script src="~/Scripts/angular.min.js"></script>
+        <script src="~/Scripts/jquery-2.1.0.min.js"></script>
+        <script src="~/Scripts/jquery-ui-1.10.4.min.js"></script>
+        <script src="~/Scripts/app.js"></script>
+        <script src="~/Scripts/controllers/Analytics.js"></script>
+        
+        <script src="https://apis.google.com/js/client.js"></script>
+        <script src="~/Scripts/analytics-api.js"></script>
+    </body>
+</html>

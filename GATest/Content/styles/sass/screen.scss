@@ -1,0 +1,180 @@
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+
+@import "compass/reset";
+@import "susy";
+@import "compass/css3/border-radius";
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+
+$fontsize: 14px;
+$lineheight: 16px;
+
+@function pxtoem($px, $basepx) {
+    @return $px/$basepx + 0em;
+}
+
+$total-columns: 12;
+$column-width: 4em;
+$gutter-width: 1em;
+$grid-padding: 1em;
+$container-style: magic;
+$container-width: pxtoem(1140px, $fontsize);
+
+$font: "Open Sans", sans-serif;
+
+$white: #fff;
+$gray: #333;
+$midgray: #d3d3d3;
+$lightgray: #e6e6e6;
+
+$red: red;
+$midred: #fdd;
+$lightred: #ffefef;
+
+body {
+    .container {
+        @include container;
+    }
+
+    #errors, #results {
+        @include span-columns(12, 12);
+    }    
+    #form {
+        @include span-columns(5 omega, 12);
+    }
+    #console {
+        @include span-columns(7, 12);
+
+        textarea {
+            min-height: 200px;
+        }
+    }
+
+    font-family: $font;
+    font-size: $fontsize;
+    line-height: $lineheight;
+    color: $gray;
+
+    h1, h2, h3, h4 { margin: 1em 0; line-height: 1em; }
+
+    h1 { font-size: 2em; }
+    h2 { font-size: 1.6em; }
+    h3 { font-size: 1.4em; }
+    h4 { font-size: 1.2em; }
+
+    p {
+        margin: 0 0 1em;
+    }
+
+    table.data {
+        border: 1px solid $gray;
+
+        thead {
+            border-bottom: 1px solid $gray;
+            tr {
+                th {
+                    padding: 0.6em;
+                    border-right: 1px solid $gray;
+
+                    &:last-of-type {
+                        border-right: none;
+                    }
+                }
+            }
+        }
+        tbody {
+            tr {
+                &.last {
+                    td {
+                        border-bottom: none;
+                    }
+                }
+
+                &.even {
+                    td {
+                        background-color: $lightgray;
+                    }
+                }
+
+                td {
+                    padding: 0.6em;
+                    border-right: 1px solid $midgray;
+                    border-bottom: 1px solid $midgray;
+
+                    &:last-of-type {
+                        border-right: none;
+                    }
+                }
+            }
+        }
+    }
+
+    .error {
+        display: inline-block;
+        color: $red;
+        background-color: $lightred;
+        padding: 0.6em;
+    }
+
+    #results {
+        border: 1px solid $lightgray;
+        padding: 0.6em;
+        margin: 0 0 1em;
+    }
+
+    textarea {
+        border: 1px solid $midgray;
+        padding: 0.6em;
+        width: 96%;
+    }
+
+    fieldset, legend, textarea {
+        @include border-radius(0.2em);
+    }
+
+    fieldset {
+        border: 1px solid $lightgray;
+        padding: 0.6em;
+        margin: 0 0 1em;
+
+        legend {
+            border: 1px solid $midgray;
+            padding: 0.6em;
+        }
+
+        label {
+            display: inline-block;
+            margin-right: 0.6em;
+        }
+
+        input[type=text] {
+            display: inline-block;
+            padding: 0.6em;
+            border: 1px solid $midgray;
+            width: 96%;
+
+            &.datepicker {
+                width: 20%;
+                margin-right: 0.6em;
+            }
+        }
+
+        input[type=button], input[type=submit], button {
+            display: inline-block;
+            padding: 0.6em;
+            border: 1px solid $midgray;
+            background-color: $white;
+            color: $gray;
+
+            &:hover {
+                border: 1px solid $gray;
+                background-color: $gray;
+                color: $white;
+            }
+        }
+    }
+
+}
+
