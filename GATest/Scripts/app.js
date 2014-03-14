@@ -41,12 +41,3 @@ String.prototype.formatDate = function() {
 
 var gaApp = angular.module("gaApp", []);
 
-jQuery(function ($) {
-    var $datepicker = $(".datepicker");
-    $datepicker.datepicker();
-
-    $datepicker.each(function (i, dp) {
-        $(dp).val($(dp).data('value'));
-    });
-});
-

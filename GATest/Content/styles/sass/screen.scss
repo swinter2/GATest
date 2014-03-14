@@ -48,7 +48,7 @@ body {
         @include span-columns(7, 12);
 
         textarea {
-            min-height: 200px;
+            min-height: 300px;
         }
     }
 
@@ -69,6 +69,7 @@ body {
     }
 
     table.data {
+        width: 100%;
         border: 1px solid $gray;
 
         thead {
@@ -119,9 +120,18 @@ body {
     }
 
     #results {
-        border: 1px solid $lightgray;
-        padding: 0.6em;
         margin: 0 0 1em;
+
+        .table-results {
+            @include span-columns(8, 12);
+        }
+        .raw-results {
+             @include span-columns(4 omega, 12);
+
+             textarea {
+                min-height: 600px;
+            }
+        }
     }
 
     textarea {
@@ -159,6 +169,11 @@ body {
                 width: 20%;
                 margin-right: 0.6em;
             }
+        }
+
+        label.account {
+            display: block;
+            padding: 0.2em;
         }
 
         input[type=button], input[type=submit], button {

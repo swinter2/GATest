@@ -1,30 +1,6 @@
-﻿var scopes = 'https://www.googleapis.com/auth/analytics.readonly';
+﻿"use strict";
 
-var analyticsController = document.getElementById('analyticsController');
-
-function ngScope() {
-    return angular.element(analyticsController).scope();
-}
-
-function log(message) {
-    console.log(message);
-
-    ngScope().$apply(function ($s) {
-        var now = new Date();
-        message = now.logFormat() + "> " + message;
-        $s.output += message + "\n";
-    });
-}
-
-function showError(message) {
-    console.log(message);
-    
-    ngScope().$apply(function ($s) {
-        $s.error = message;
-        var now = new Date();
-        $s.output += now.logFormat() + "> " + message + "\n";
-    });
-}
+var scopes = 'https://www.googleapis.com/auth/analytics.readonly';
 
 // This function is called after the Client Library has finished loading
 var handleClientLoad = function() {
@@ -66,18 +42,6 @@ function handleAuthorized() {
 // Unauthorized user
 function handleUnAuthorized() {
     showError('Unauthorized');
-    //$authentication.show();
-
-    //var authorizeButton = document.getElementById('authorize-button');
-    //var makeApiCallButton = document.getElementById('make-api-call-button');
-
-    //// Show the 'Authorize Button' and hide the 'Get Visits' button
-    //makeApiCallButton.style.visibility = 'hidden';
-    //authorizeButton.style.visibility = '';
-
-    //// When the 'Authorize' button is clicked, call the handleAuthClick function
-    //authorizeButton.onclick = handleAuthClick;
-
     gapi.auth.authorize({ client_id: ngScope().clientId, scope: scopes, immediate: false }, handleAuthResult);
 }
 
@@ -96,15 +60,22 @@ function handleAccounts(results) {
     if (!results.code) {
         if (results && results.items && results.items.length) {
 
-            // Get the first Google Analytics account
-            var aid = results.items[0].id;
+            var aid = "";
+
+            var $scope = ngScope();
+            if (!$scope.accounts) {
+                $scope.$apply(function($s) {
+                    $s.accounts = results.items;
+                    $s.accountId =
+                        aid = results.items[0].id;
+                });
+            } else {
+                aid = $scope.accountId;
+            }
 
             // Query for Web Properties
             //var aid = ngScope().accountId;
             if (aid) {
-                ngScope().$apply(function ($s) {
-                    $s.accountId = aid;
-                });
                 queryWebproperties(aid);
             } else {
                 // Show the list of accounts in a radio button selection so that the user can pick which account they want.
@@ -182,6 +153,8 @@ function handleProfiles(results) {
             var $s = ngScope();
             var startDate = $s.startDate;
             var endDate = $s.endDate;
+            log("Start Date: " + startDate);
+            log("End Date: " + endDate);
 
             queryCoreReportingApi(firstProfileId, startDate, endDate);
 

@@ -42,6 +42,10 @@
                             <span ng-show="!username">Not currently logged in with a Google Account.</span>
                         </p>
                         <p>
+                            Analytics Accounts:
+                            <label class="account" ng-repeat="acct in accounts"><input ng-checked="accountId == acct.id" type="radio" name="account" value="{{ acct.id }}" /> {{ acct.name }}</label>
+                        </p>
+                        <p>
                             <label>Client ID: </label>
                             <input type="text" ng-model="clientId"/>
                         </p>
@@ -60,28 +64,36 @@
                             <input class="datepicker" type="text" ng-model="endDate" data-value="@endDate.ToString("d")"/>
                         </p>
                         <p>
-                            <button ng-click="fetchData()">Fetch Results</button>
+                            <button id="fetchResults">Fetch Results</button>
                         </p>
                     </fieldset>
                 </div>
 
                 <div id="results" ng-show="results && results.rows.length > 0">
-                    <h2>Results</h2>
+                    <div class="table-results">
+                        <h3>Results</h3>
+                        <table class="data">
+                            <thead>
+                                <tr>
+                                    <th ng-repeat="header in results.columnHeaders">{{ header.name }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="row in results.rows" ng-init="outerIndex = $index" class="{{ $last ? 'last' : '' }} {{ $even ? 'even' : 'odd' }}">
+                                    <td ng-repeat="header in results.columnHeaders" ng-init="innerIndex = $index; row = results.rows[outerIndex][innerIndex]">
+                                        <span ng-show="header.name === 'ga:date'">{{ row.formatDate() }}</span>
+                                        <span ng-show="header.name !== 'ga:date'">{{ row }}</span>
+                                    
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                     
-                    <table class="data">
-                        <thead>
-                            <tr>
-                                <th ng-repeat="header in results.columnHeaders">{{ header.name }}</th>    
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="row in results.rows" class="{{ $last ? 'last' : '' }} {{ $even ? 'even' : 'odd' }}">
-                                <td ng-repeat="prop in row">{{ prop }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    @*<textarea>{{ results.rows }}</textarea>*@
+                    <div class="raw-results">
+                        <h3>Raw Results Object</h3>
+                        <textarea readonly>{{ results }}</textarea>
+                    </div>
                 </div>
             </div>
             
