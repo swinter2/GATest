@@ -44,9 +44,9 @@ function showError(message) {
 
 gaApp.controller("Analytics",
     function Analytics($scope) {
-        $scope.clientId = "955069224494.apps.googleusercontent.com";
-        $scope.apiKey = "AIzaSyDdU5uKPYj0zX6XGHDQ5RY-O9wS_OM7HDc";
-        $scope.trackingCode = "UA-2003853-6";
+        $scope.clientId = "";
+        $scope.apiKey = "";
+        $scope.trackingCode = "";
         $scope.accounts = null;
         $scope.accountId = "";
         $scope.username = "";
