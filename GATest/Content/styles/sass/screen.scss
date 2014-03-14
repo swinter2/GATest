@@ -25,20 +25,29 @@ $container-width: pxtoem(1140px, $fontsize);
 $font: "Open Sans", sans-serif;
 
 $white: #fff;
+$black: #000;
 $gray: #333;
 $midgray: #d3d3d3;
 $lightgray: #e6e6e6;
+$superlightgray: #f0f0f0;
 
 $red: red;
 $midred: #fdd;
 $lightred: #ffefef;
+
+$blue: blue;
+$lightblue: #e0e0ff;
+$midblue: #aaaaff;
 
 body {
     .container {
         @include container;
     }
 
-    #errors, #results {
+    #errors {
+        @include span-columns(4, 12);
+    }
+    #results {
         @include span-columns(12, 12);
     }    
     #form {
@@ -95,7 +104,7 @@ body {
 
                 &.even {
                     td {
-                        background-color: $lightgray;
+                        background-color: $superlightgray;
                     }
                 }
 
@@ -177,6 +186,7 @@ body {
         }
 
         input[type=button], input[type=submit], button {
+            @include border-radius(0.2em);
             display: inline-block;
             padding: 0.6em;
             border: 1px solid $midgray;
@@ -184,9 +194,9 @@ body {
             color: $gray;
 
             &:hover {
-                border: 1px solid $gray;
-                background-color: $gray;
-                color: $white;
+                border: 1px solid $midblue;
+                background-color: $lightblue;
+                color: $black;
             }
         }
     }
