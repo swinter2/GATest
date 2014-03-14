@@ -46,15 +46,15 @@ gaApp.controller("Analytics",
     function Analytics($scope) {
         $scope.clientId = "";
         $scope.apiKey = "";
-        $scope.trackingCode = "";
+        $scope.trackingCode = "UA-2003853-6";
         $scope.accounts = null;
         $scope.accountId = "";
         $scope.username = "";
 
         $scope.error = "";
         $scope.output = "";
-        $scope.startDate = "";
-        $scope.endDate = "";
+        $scope.startDate = startDate;
+        $scope.endDate = endDate;
 
         $scope.results = null;
     }
@@ -69,14 +69,8 @@ jQuery(function ($) {
             log(this);
             log(dateText);
             var id = this.id;
-            switch (id) {
-                case "startDate":
-                    break;
-                case "endDate":
-                    break;
-            }
             ngScope().$apply(function ($s) {
-
+                $s[id] = dateText;
             });
         }
     });

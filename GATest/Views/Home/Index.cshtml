@@ -83,7 +83,6 @@
                                     <td ng-repeat="header in results.columnHeaders" ng-init="innerIndex = $index; row = results.rows[outerIndex][innerIndex]">
                                         <span ng-show="header.name === 'ga:date'">{{ row.formatDate() }}</span>
                                         <span ng-show="header.name !== 'ga:date'">{{ row }}</span>
-                                    
                                     </td>
                                 </tr>
                             </tbody>
@@ -107,5 +106,9 @@
         
         <script src="https://apis.google.com/js/client.js"></script>
         <script src="~/Scripts/analytics-api.js"></script>
+        <script>
+            var startDate = "@startDate.ToString("yyyy-MM-dd")";
+            var endDate = "@endDate.ToString("yyyy-MM-dd")";
+        </script>
     </body>
 </html>
