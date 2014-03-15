@@ -5,7 +5,11 @@ var scopes = 'https://www.googleapis.com/auth/analytics.readonly';
 // This function is called after the Client Library has finished loading
 var handleClientLoad = function() {
     // 1. Set the API Key
-    gapi.client.setApiKey(ngScope().apiKey);
+    if (!ngScope().apiKey) {
+        showError("API Key not set.");
+        return;
+    }
+    api.client.setApiKey(ngScope().apiKey);
 
     // 2. Call the function that checks if the user is Authenticated. This is defined in the next section
     window.setTimeout(checkAuth, 1);
@@ -45,7 +49,16 @@ function handleUnAuthorized() {
     gapi.auth.authorize({ client_id: ngScope().clientId, scope: scopes, immediate: false }, handleAuthResult);
 }
 
-var makeApiCall = function() {
+var makeApiCall = function () {
+    var $scope = ngScope();
+    if (!$scope.apiKey) {
+        showError("API Key not set.");
+        return;
+    }
+    if (!$scope.clientId) {
+        showError("Client ID not set.");
+        return;
+    }
     queryAccounts();
 };
 
