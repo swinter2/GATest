@@ -33,13 +33,11 @@
                 <div id="form">
                     <fieldset>
                         <legend>App Auth</legend>
-                        @*<p>
-                            <span ng-show="username">Currently logged in as {{ username }}</span>
-                            <span ng-show="!username">Not currently logged in with a Google Account.</span>
-                        </p>*@
                         <p>
-                            Available Analytics Accounts:
-                            <label class="account" ng-repeat="acct in accounts"><input ng-checked="accountId == acct.id" type="radio" name="account" data-name="{{ acct.name }}" value="{{ acct.id }}" /> {{ acct.name }}</label>
+                            <label>Available Analytics Accounts:</label>
+                            <select ng-model="accountId">
+                                <option ng-repeat="acct in accounts" ng-selected="acct.id == accountId" ng-value="acct.id">{{ acct.name }} ({{ acct.id }})</option>
+                            </select>
                         </p>
                         <p>
                             <label>Client ID: </label>
@@ -51,13 +49,16 @@
                         </p>
                         <p>
                             <label>Tracking Code: </label>
-                            <input type="text" ng-model="trackingCode"/>
+                            @*<input type="text" ng-model="trackingCode"/>*@
+                            <select ng-model="trackingCode">
+                                <option ng-repeat="code in trackingCodes" ng-selected="code.id == trackingCode" value="{{ code.id }}">{{ code.name }} ({{ code.id }})</option>
+                            </select>
                         </p>
                         <p>
                             <label>Start Date: </label>
-                            <input id="startDate" class="datepicker" type="text" data-value="@startDate.ToString("d")"/>
+                            <input id="startDate" class="datepicker" type="text" data-value="@startDate.ToString("yyyy-MM-dd")"/>
                             <label>End Date: </label>
-                            <input id="endDate" class="datepicker" type="text" data-value="@endDate.ToString("d")"/>
+                            <input id="endDate" class="datepicker" type="text" data-value="@endDate.ToString("yyyy-MM-dd")"/>
                         </p>
                         <p>
                             <button id="fetchResults">Fetch Results</button>
@@ -101,11 +102,10 @@
         <script src="~/Scripts/angular.min.js"></script>
         <script src="~/Scripts/jquery-2.1.0.min.js"></script>
         <script src="~/Scripts/jquery-ui-1.10.4.min.js"></script>
-        <script src="~/Scripts/app.js"></script>
-        <script src="~/Scripts/controllers/Analytics.js"></script>
-        
+        <script src="~/Scripts/analytics/app.js"></script>
+        <script src="~/Scripts/analytics/controllers/Analytics.js"></script>
         <script src="https://apis.google.com/js/client.js"></script>
-        <script src="~/Scripts/analytics-api.js"></script>
+        <script src="~/Scripts/analytics/api.js"></script>
         <script>
             var startDate = "@startDate.ToString("yyyy-MM-dd")";
             var endDate = "@endDate.ToString("yyyy-MM-dd")";
