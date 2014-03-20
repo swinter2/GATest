@@ -20,13 +20,13 @@
             
             <h1>@title</h1>
 
-            <div id="analyticsController" ng-controller="Analytics">
+            <div id="analyticsController" ng-controller="Analytics" ng-cloak>
                                 
                 <div id="console">
                     <fieldset>
                         <legend>Console</legend>
                     
-                        <textarea readonly>{{ output }}</textarea>
+                        <textarea readonly ng-bind="output"></textarea>
 
                     </fieldset>
                 </div> 
@@ -47,11 +47,16 @@
                             <label>API Key: </label>
                             <input type="text" ng-model="apiKey"/>
                         </p>
-                        <p>
+                        <p ng-show="trackingCodes">
                             <label>Tracking Code: </label>
-                            @*<input type="text" ng-model="trackingCode"/>*@
                             <select ng-model="trackingCode">
                                 <option ng-repeat="code in trackingCodes" ng-selected="code.id == trackingCode" value="{{ code.id }}">{{ code.name }} ({{ code.id }})</option>
+                            </select>
+                        </p>
+                        <p ng-show="gaViews">
+                            <label>Analytics View: </label>
+                            <select ng-model="gaView">
+                                <option ng-repeat="view in gaViews" ng-selected="view.id == gaView.id" value="{{ view.id }}">{{ view.name }} ({{ view.id }})</option>
                             </select>
                         </p>
                         <p>

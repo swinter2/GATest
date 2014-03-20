@@ -15,6 +15,9 @@ $lineheight: 16px;
     @return $px/$basepx + 0em;
 }
 
+$iphone-portrait: pxtoem(320px, $fontsize);
+$ipad-portrait: pxtoem(768px, $fontsize);
+
 $total-columns: 12;
 $column-width: 4em;
 $gutter-width: 1em;
@@ -45,16 +48,24 @@ body {
     }
 
     #errors {
-        @include span-columns(4, 12);
+        @include at-breakpoint($ipad-portrait) {
+            @include span-columns(4, 12);
+        }
     }
     #results {
-        @include span-columns(12, 12);
+        @include at-breakpoint($ipad-portrait) {
+            @include span-columns(12, 12);
+        }
     }    
     #form {
-        @include span-columns(5 omega, 12);
+        @include at-breakpoint($ipad-portrait) {
+            @include span-columns(5 omega, 12);
+        }
     }
     #console {
-        @include span-columns(7, 12);
+        @include at-breakpoint($ipad-portrait) {
+            @include span-columns(7, 12);
+        }
 
         textarea {
             min-height: 300px;
@@ -132,12 +143,16 @@ body {
         margin: 0 0 1em;
 
         .table-results {
-            @include span-columns(8, 12);
+            @include at-breakpoint($ipad-portrait) {
+                @include span-columns(8, 12);
+            }
         }
         .raw-results {
-             @include span-columns(4 omega, 12);
+            @include at-breakpoint($ipad-portrait) {
+                @include span-columns(4 omega, 12);
+            }
 
-             textarea {
+            textarea {
                 min-height: 600px;
             }
         }

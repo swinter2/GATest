@@ -46,13 +46,16 @@ gaApp.controller("Analytics",
     function ($scope) {
         $scope.clientId = "955069224494.apps.googleusercontent.com";
         $scope.apiKey = "AIzaSyDdU5uKPYj0zX6XGHDQ5RY-O9wS_OM7HDc";
-        $scope.trackingCode = "UA-2003853-6";
+        $scope.gaView = null;
+        $scope.gaViews = null;
+        $scope.trackingCode = ""; //"UA-2003853-6";
         $scope.trackingCodes = null;
         $scope.accounts = null;
         $scope.accountId = "";
         $scope.username = "";
 
-        $scope.trackingCodeChanged = function() {
+        $scope.trackingCodeChanged = function () {
+            // TODO: Query for views.
         };
 
         $scope.error = "";

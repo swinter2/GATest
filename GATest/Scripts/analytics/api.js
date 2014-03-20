@@ -41,16 +41,8 @@ function loadAnalyticsClient() {
 // Authorized user
 function handleAuthorized() {
     //$authentication.hide();
-    makeApiCall();
-}
+    //makeApiCall();
 
-// Unauthorized user
-function handleUnAuthorized() {
-    showError('Unauthorized');
-    gapi.auth.authorize({ client_id: ngScope().clientId, scope: scopes, immediate: false }, handleAuthResult);
-}
-
-var makeApiCall = function () {
     var $scope = ngScope();
     if (!$scope.apiKey) {
         showError("API Key not set.");
@@ -60,8 +52,57 @@ var makeApiCall = function () {
         showError("Client ID not set.");
         return;
     }
-    queryAccounts();
+
+    // authorized, so query accounts.
+}
+
+// Unauthorized user
+function handleUnAuthorized() {
+    showError('Unauthorized');
+    gapi.auth.authorize({ client_id: ngScope().clientId, scope: scopes, immediate: false }, handleAuthResult);
+}
+
+var makeApiCall = function (action) {
+    var $scope = ngScope();
+    if (!$scope.apiKey) {
+        showError("API Key not set.");
+        return;
+    }
+    if (!$scope.clientId) {
+        showError("Client ID not set.");
+        return;
+    }
+    if (action) {
+        action();
+    } else {
+        queryAccounts();
+    }
 };
+
+function authorizeWithAction(clientId, action) {
+    gapi.auth.authorize({ client_id: clientId, scope: scopes, immediate: true }, handleAuthResult);
+}
+
+function queryForAccountsWithAction(action) {
+    log('Querying Accounts.');
+    gapi.client.analytics.management.accounts.list().execute(action);
+}
+
+function queryForWebPropertiesWithAction(accountId, action) {
+    log('Querying Webproperties.');
+    // Get a list of all the Web Properties for the account
+    gapi.client.analytics.management.webproperties.list({ 'accountId': accountId }).execute(action);
+}
+
+function queryForProfilesWithAction(accountId, webPropertyId, action) {
+    log('Querying Views (Profiles).');
+
+    // Get a list of all Views (Profiles) for the first Web Property of the first Account
+    gapi.client.analytics.management.profiles.list({
+        'accountId': accountId,
+        'webPropertyId': webPropertyId
+    }).execute(action);
+}
 
 function queryAccounts() {
     log('Querying Accounts.');
