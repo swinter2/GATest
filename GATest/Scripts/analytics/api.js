@@ -40,20 +40,50 @@ function loadAnalyticsClient() {
 
 // Authorized user
 function handleAuthorized() {
-    //$authentication.hide();
-    //makeApiCall();
-
-    var $scope = ngScope();
-    if (!$scope.apiKey) {
-        showError("API Key not set.");
-        return;
-    }
-    if (!$scope.clientId) {
-        showError("Client ID not set.");
-        return;
-    }
-
     // authorized, so query accounts.
+    queryForAccountsWithAction(function(results) {
+        if (results && results.items) {
+            var acctId = null;
+            ngScope().$apply(function($s) {
+                $s.accounts = results.items;
+                $s.account = $s.accounts[0];
+                $s.accountId = $s.account.id;
+                acctId = $s.accountId;
+            });
+
+            // Query for web properties
+            queryForWebPropertiesWithAction(acctId, function(results) {
+                if (results && results.items) {
+                    var webPropertyId = null;
+                    ngScope().$apply(function ($s) {
+                        $s.trackingCodes = results.items;
+                        $s.trackingCode = $s.trackingCodes[0];
+                        $s.trackingCodeId = $s.trackingCode.id;
+                        webPropertyId = $s.trackingCodeId;
+                    });
+
+                    // Query for profiles under the web property.
+                    queryForProfilesWithAction(acctId, webPropertyId, function(results) {
+                        if (results && results.items) {
+                            var profileId = null;
+                            ngScope().$apply(function($s) {
+                                $s.gaViews = results.items;
+                                $s.gaView = $s.gaViews[0];
+                                $s.gaViewId = $s.gaView.id;
+                                profileId = $s.gaViewId;
+                            });
+                        } else {
+                            showInfo("No profiles (views) found for this property: " + webPropertyId + " account id: " + acctId);
+                        }
+                    });
+                } else {
+                    showInfo("No properties found for this account: " + acctId);
+                }
+            });
+        } else {
+            showInfo("No accounts found for this user.");
+        }
+    });
 }
 
 // Unauthorized user
@@ -74,14 +104,11 @@ var makeApiCall = function (action) {
     }
     if (action) {
         action();
-    } else {
-        queryAccounts();
     }
+    //else {
+    //    queryAccounts();
+    //}
 };
-
-function authorizeWithAction(clientId, action) {
-    gapi.auth.authorize({ client_id: clientId, scope: scopes, immediate: true }, handleAuthResult);
-}
 
 function queryForAccountsWithAction(action) {
     log('Querying Accounts.');
@@ -104,130 +131,8 @@ function queryForProfilesWithAction(accountId, webPropertyId, action) {
     }).execute(action);
 }
 
-function queryAccounts() {
-    log('Querying Accounts.');
-
-    // Get a list of all Google Analytics accounts for this user
-    gapi.client.analytics.management.accounts.list().execute(handleAccounts);
-}
-
-function handleAccounts(results) {
-    if (!results.code) {
-        if (results && results.items && results.items.length) {
-
-            var aid = "";
-
-            var $scope = ngScope();
-            if (!$scope.accounts) {
-                $scope.$apply(function($s) {
-                    $s.accounts = results.items;
-                    $s.accountId =
-                        aid = results.items[0].id;
-                });
-            } else {
-                aid = $scope.accountId;
-            }
-
-            // Query for Web Properties
-            //var aid = ngScope().accountId;
-            if (aid) {
-                queryWebproperties(aid);
-            } else {
-                // Show the list of accounts in a radio button selection so that the user can pick which account they want.
-                //$accountChoices.empty();
-
-                //if (results.items.length > 0) {
-                //    for (var i in results.items) {
-                //        var item = results.items[i];
-                //        $accountChoices.append("<button class='button' value='" + item.id + "'>" + item.name + "</button>");
-                //    }
-                //} else {
-                //    $accountChoices.prev('p').remove();
-                //    $accountChoices.html("The currently logged in Google Account (" + results.username + ") does not have read access to any Analytics Accounts.");
-                //}
-                //$chooseAccount.show();
-                showError("No Account Id.");
-            }
-        } else {
-            showError('No accounts found for this user.');
-        }
-    } else {
-        showError('There was an error querying accounts: ' + results.message);
-    }
-}
-
-function queryWebproperties(accountId) {
-    log('Querying Webproperties.');
-
-    // Get a list of all the Web Properties for the account
-    gapi.client.analytics.management.webproperties.list({ 'accountId': accountId }).execute(handleWebproperties);
-}
-
-function handleWebproperties(results) {
-    if (!results.code) {
-        if (results && results.items && results.items.length) {
-
-            // Get the first Google Analytics account
-            //var firstAccountId = results.items[0].accountId;
-
-            // Get the first Web Property ID
-            //var firstWebpropertyId = results.items[0].id;
-            var scope = ngScope();
-
-            scope.$apply(function($s) {
-                $s.trackingCodes = results.items;
-            });
-
-            // Query for Views (Profiles)
-            queryProfiles(scope.accountId, scope.trackingCode);
-
-        } else {
-            showError('No webproperties found for this Google Analytics user.  (' + results.username + ")");
-        }
-    } else {
-        showError('There was an error querying webproperties: ' + results.message);
-    }
-}
-
-function queryProfiles(accountId, webpropertyId) {
-    log('Querying Views (Profiles).');
-
-    // Get a list of all Views (Profiles) for the first Web Property of the first Account
-    gapi.client.analytics.management.profiles.list({
-        'accountId': accountId,
-        'webPropertyId': webpropertyId
-    }).execute(handleProfiles);
-}
-
-function handleProfiles(results) {
-    if (!results.code) {
-        if (results && results.items && results.items.length) {
-
-            // Get the first View (Profile) ID
-            var firstProfileId = results.items[0].id;
-
-            // Step 3. Query the Core Reporting API
-            // use the start date and end date found in the UI
-            //var startDate = $("#analyticsStartDate").val().reformatDate();
-            //var endDate = $("#analyticsEndDate").val().reformatDate();
-            var $s = ngScope();
-            var startDate = $s.startDate;
-            var endDate = $s.endDate;
-            log("Start Date: " + startDate);
-            log("End Date: " + endDate);
-
-            queryCoreReportingApi(firstProfileId, startDate, endDate);
-
-        } else {
-            showError('No views (profiles) found for this Google Analytics user.  (' + results.username + ")");
-        }
-    } else {
-        showError('There was an error querying views (profiles): ' + results.message);
-    }
-}
-
-function queryCoreReportingApi(profileId, startDate, endDate) {
-    log('Querying Core Reporting API.');
+function queryCoreReportingApi(profileId, startDate, endDate, action) {
+    log('Querying Core Reporting API for profile ID: ' + profileId);
 
     if (!startDate || !endDate) {
         var now = new Date();
@@ -248,14 +153,7 @@ function queryCoreReportingApi(profileId, startDate, endDate) {
         'start-index': '1',
         'max-results': '1000',
         'output': 'json'
-    }).execute(handleCoreReportingResults);
-}
-
-function handleCoreReportingResults(results) {
-    log(results);
-    ngScope().$apply(function($s) {
-        $s.results = results;
-    });
+    }).execute(action);
 }
 
 jQuery(function($) {

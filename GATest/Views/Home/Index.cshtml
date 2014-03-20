@@ -35,7 +35,7 @@
                         <legend>App Auth</legend>
                         <p>
                             <label>Available Analytics Accounts:</label>
-                            <select ng-model="accountId">
+                            <select ng-model="accountId" ng-change="accountChanged()">
                                 <option ng-repeat="acct in accounts" ng-selected="acct.id == accountId" ng-value="acct.id">{{ acct.name }} ({{ acct.id }})</option>
                             </select>
                         </p>
@@ -49,14 +49,14 @@
                         </p>
                         <p ng-show="trackingCodes">
                             <label>Tracking Code: </label>
-                            <select ng-model="trackingCode">
-                                <option ng-repeat="code in trackingCodes" ng-selected="code.id == trackingCode" value="{{ code.id }}">{{ code.name }} ({{ code.id }})</option>
+                            <select ng-model="trackingCodeId" ng-change="trackingCodeChanged()">
+                                <option ng-repeat="code in trackingCodes" ng-selected="code.id == trackingCodeId" ng-value="{{ code.id }}">{{ code.name }} ({{ code.id }})</option>
                             </select>
                         </p>
                         <p ng-show="gaViews">
                             <label>Analytics View: </label>
-                            <select ng-model="gaView">
-                                <option ng-repeat="view in gaViews" ng-selected="view.id == gaView.id" value="{{ view.id }}">{{ view.name }} ({{ view.id }})</option>
+                            <select ng-model="gaViewId">
+                                <option ng-repeat="view in gaViews" ng-selected="view.id == gaViewId" ng-value="{{ view.id }}">{{ view.name }} ({{ view.id }})</option>
                             </select>
                         </p>
                         <p>
@@ -66,13 +66,16 @@
                             <input id="endDate" class="datepicker" type="text" data-value="@endDate.ToString("yyyy-MM-dd")"/>
                         </p>
                         <p>
-                            <button id="fetchResults">Fetch Results</button>
+                            <button id="fetchResults" ng-click="fetchResults()">Fetch Results</button>
                         </p>
                     </fieldset>
                 </div>
                 
                 <div id="errors">
-                    <p class="error" ng-show="error">{{ error }}</p>
+                    <p class="error" ng-show="error" ng-bind="error"></p>
+                </div>
+                <div id="information">
+                    <p class="info" ng-show="info" ng-bind="info"></p>
                 </div>
 
                 <div id="results" ng-show="results && results.rows.length > 0">

@@ -48,14 +48,19 @@ body {
     }
 
     #errors {
-        @include at-breakpoint($ipad-portrait) {
-            @include span-columns(4, 12);
-        }
+        // @include at-breakpoint($ipad-portrait) {
+        //     @include span-columns(12, 12);
+        // }
+    }    
+    #information {
+        // @include at-breakpoint($ipad-portrait) {
+        //     @include span-columns(12, 12);
+        // }
     }
     #results {
-        @include at-breakpoint($ipad-portrait) {
-            @include span-columns(12, 12);
-        }
+        // @include at-breakpoint($ipad-portrait) {
+        //     @include span-columns(12, 12);
+        // }
     }    
     #form {
         @include at-breakpoint($ipad-portrait) {
@@ -136,6 +141,12 @@ body {
         display: inline-block;
         color: $red;
         background-color: $lightred;
+        padding: 0.6em;
+    }    
+    .info {
+        display: inline-block;
+        color: $black;
+        background-color: $lightblue;
         padding: 0.6em;
     }
 
