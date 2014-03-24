@@ -59,6 +59,7 @@ function showInfo(message) {
 
 gaApp.controller("Analytics",
     function ($scope) {
+        $scope.loading = false;
         $scope.clientId = "955069224494.apps.googleusercontent.com";
         $scope.apiKey = "AIzaSyDdU5uKPYj0zX6XGHDQ5RY-O9wS_OM7HDc";
         $scope.gaViewId = "";
@@ -70,10 +71,28 @@ gaApp.controller("Analytics",
         $scope.accounts = null;
         $scope.account = null;
         $scope.accountId = "";
+        $scope.error = "";
+        $scope.info = "";
+        $scope.output = "";
+        $scope.results = null;
+
+        var before = new Date();
+        before.setDate(before.getDate()-7);
+        $scope.startDate = before.gaFormat();
+        $scope.endDate = (new Date()).gaFormat();
+
+        // Turn this into a "yyyy-M-d" format instead of "yyyy-MM-dd" because for some reason it is a day behind with the leading zeroes.
+        $scope.startDateObj = function () {
+            return new Date($scope.startDate.replace(/\-0/i, '-'));
+        };
+        $scope.endDateObj = function () {
+            return new Date($scope.endDate.replace(/\-0/i, '-'));
+        };
 
         $scope.accountChanged = function () {
             // Query for tracking codes (web properties) underneath this account.
-            console.log('account changed.');
+            log('account changed.');
+            $scope.loading = true;
 
             $scope.trackingCodeId = "";
             $scope.trackingCode = null;
@@ -85,15 +104,19 @@ gaApp.controller("Analytics",
                         $s.trackingCodes = results.items;
                         $s.trackingCode = $s.trackingCodes[0];
                         $s.trackingCodeId = $s.trackingCode.id;
+
+                        $scope.trackingCodeChanged();
                     } else {
                         showInfo("No properties found for this account: " + $s.accountId);
+                        $s.loading = false;
                     }
                 });
             });
         };
         $scope.trackingCodeChanged = function () {
             // Query for views underneath this web property.
-            console.log('tracking code changed.');
+            log('tracking code changed.');
+            $scope.loading = true;
 
             $scope.gaViews = null;
             $scope.gaView = null;
@@ -108,28 +131,33 @@ gaApp.controller("Analytics",
                     } else {
                         showInfo("No profiles (views) found for this property: " + $s.trackingCodeId + " account id: " + $s.accountId);
                     }
+                    $s.loading = false;
                 });
             });
         };
-
-        $scope.error = "";
-        $scope.info = "";
-        $scope.output = "";
-        $scope.startDate = startDate;
-        $scope.endDate = endDate;
-
-        $scope.results = null;
-
         $scope.fetchResults = function() {
+            log("Fetching results.");
+            $scope.loading = true;
+
+            $scope.info = "";
             $scope.error = "";
             $scope.results = null;
-            queryCoreReportingApi($scope.trackingCodeId, $scope.startDate, $scope.endDate, function(results) {
+
+            if (!$scope.gaView) {
+                showError("No View available for tracking code " + $scope.trackingCodeId);
+                $scope.loading = false;
+                return;
+            }
+
+            queryCoreReportingApi($scope.gaViewId, $scope.startDate, $scope.endDate, function(results) {
                 $scope.$apply(function($s) {
-                    if (results && results.items) {
+                    if (results && results.rows) {
                         $s.results = results;
                     } else {
-                        showInfo("No results found for Profile ID: " + $s.trackingCodeId);
+                        showInfo("No results found for Tracking Code: (" + $s.trackingCode.name + ", " + $s.trackingCode.id + "), View: (" 
+                            + $s.gaView.name + ", " + $s.gaView.id + "), " + "Start Date: " + $s.startDate + " End Date: " + $s.endDate);
                     }
+                    $s.loading = false;
                 });
             });
         };

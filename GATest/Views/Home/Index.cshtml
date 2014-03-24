@@ -30,15 +30,9 @@
 
                     </fieldset>
                 </div> 
-                <div id="form">
+                <div id="auth">
                     <fieldset>
                         <legend>App Auth</legend>
-                        <p>
-                            <label>Available Analytics Accounts:</label>
-                            <select ng-model="accountId" ng-change="accountChanged()">
-                                <option ng-repeat="acct in accounts" ng-selected="acct.id == accountId" ng-value="acct.id">{{ acct.name }} ({{ acct.id }})</option>
-                            </select>
-                        </p>
                         <p>
                             <label>Client ID: </label>
                             <input type="text" ng-model="clientId"/>
@@ -47,26 +41,40 @@
                             <label>API Key: </label>
                             <input type="text" ng-model="apiKey"/>
                         </p>
+                    </fieldset>
+                </div>
+                <div id="form">
+                    <fieldset>
+                        <legend>Options</legend>
+                        <p>
+                            <label>Available Analytics Accounts:</label>
+                            <select ng-model="accountId" ng-change="accountChanged()">
+                                <option ng-repeat="acct in accounts" ng-selected="acct.id == accountId" ng-value="acct.id">{{ acct.name }} ({{ acct.id }})</option>
+                            </select>
+                        </p>
                         <p ng-show="trackingCodes">
                             <label>Tracking Code: </label>
                             <select ng-model="trackingCodeId" ng-change="trackingCodeChanged()">
-                                <option ng-repeat="code in trackingCodes" ng-selected="code.id == trackingCodeId" ng-value="{{ code.id }}">{{ code.name }} ({{ code.id }})</option>
+                                <option ng-repeat="code in trackingCodes" ng-selected="code.id == trackingCodeId" ng-value="code.id">{{ code.name }} ({{ code.id }})</option>
                             </select>
                         </p>
+                        <p ng-show="!trackingCodes">No tracking codes available for account {{ account.name }} ({{ account.id }}).</p>
                         <p ng-show="gaViews">
                             <label>Analytics View: </label>
                             <select ng-model="gaViewId">
-                                <option ng-repeat="view in gaViews" ng-selected="view.id == gaViewId" ng-value="{{ view.id }}">{{ view.name }} ({{ view.id }})</option>
+                                <option ng-repeat="view in gaViews" ng-selected="view.id == gaViewId" ng-value="view.id">{{ view.name }} ({{ view.id }})</option>
                             </select>
                         </p>
+                        <p ng-show="!gaViews">No views available for tracking code {{ trackingCode.name }} ({{ trackingCode.id }}).</p>
                         <p>
                             <label>Start Date: </label>
-                            <input id="startDate" class="datepicker" type="text" data-value="@startDate.ToString("yyyy-MM-dd")"/>
+                            <input id="startDate" class="datepicker" type="text" data-value="{{ startDate }}"/>
                             <label>End Date: </label>
-                            <input id="endDate" class="datepicker" type="text" data-value="@endDate.ToString("yyyy-MM-dd")"/>
+                            <input id="endDate" class="datepicker" type="text" data-value="{{ endDate }}"/>
                         </p>
+                        <p class="error" ng-show="startDateObj() > endDateObj()">Start date cannot be greater than the end date.</p>
                         <p>
-                            <button id="fetchResults" ng-click="fetchResults()">Fetch Results</button>
+                            <button id="fetchResults" ng-click="fetchResults()" ng-disabled="!gaView || !trackingCode || !account || (startDateObj() > endDateObj())">Fetch Results</button>
                         </p>
                     </fieldset>
                 </div>
@@ -76,12 +84,14 @@
                 </div>
                 <div id="information">
                     <p class="info" ng-show="info" ng-bind="info"></p>
+                    <img ng-show="loading" ng-src="/static/styles/images/loading.gif" title="Loading" alt="Loading" />
                 </div>
 
-                <div id="results" ng-show="results && results.rows.length > 0">
+                <div id="results">
                     <div class="table-results">
                         <h3>Results</h3>
-                        <table class="data">
+                        <p ng-show="!results">No results found.</p>
+                        <table ng-show="results && results.rows" class="data">
                             <thead>
                                 <tr>
                                     <th ng-repeat="header in results.columnHeaders">{{ header.name }}</th>
@@ -100,7 +110,7 @@
                     
                     <div class="raw-results">
                         <h3>Raw Results Object</h3>
-                        <textarea readonly>{{ results }}</textarea>
+                        <textarea readonly>{{ results || "No Data" }}</textarea>
                     </div>
                 </div>
             </div>

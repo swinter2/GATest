@@ -53,16 +53,16 @@ body {
         // }
     }    
     #information {
-        // @include at-breakpoint($ipad-portrait) {
-        //     @include span-columns(12, 12);
-        // }
+        @include at-breakpoint($ipad-portrait) {
+            @include span-columns(7, 12);
+        }
     }
     #results {
         // @include at-breakpoint($ipad-portrait) {
         //     @include span-columns(12, 12);
         // }
     }    
-    #form {
+    #auth, #form {
         @include at-breakpoint($ipad-portrait) {
             @include span-columns(5 omega, 12);
         }
@@ -228,6 +228,16 @@ body {
                 border: 1px solid $midblue;
                 background-color: $lightblue;
                 color: $black;
+            }
+
+            &[disabled] {
+                border: 1px solid $midgray;
+                background-color: $lightgray;
+                color: $midgray;
+
+                &:hover {
+                    border: 1px solid $midgray;
+                }
             }
         }
     }

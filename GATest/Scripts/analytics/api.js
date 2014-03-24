@@ -17,6 +17,7 @@ var handleClientLoad = function() {
 };
 
 function checkAuth() {
+    ngScope().$apply(function ($s) { $s.loading = true; });
     // Call the Google Accounts Service to determine the current user's auth status.
     // Pass the response to the handleAuthResult callback function
     gapi.auth.authorize({ client_id: ngScope().clientId, scope: scopes, immediate: true }, handleAuthResult);
@@ -40,6 +41,7 @@ function loadAnalyticsClient() {
 
 // Authorized user
 function handleAuthorized() {
+    ngScope().$apply(function ($s) { $s.loading = true; });
     // authorized, so query accounts.
     queryForAccountsWithAction(function(results) {
         if (results && results.items) {
@@ -71,17 +73,21 @@ function handleAuthorized() {
                                 $s.gaView = $s.gaViews[0];
                                 $s.gaViewId = $s.gaView.id;
                                 profileId = $s.gaViewId;
+                                $s.loading = false;
                             });
                         } else {
                             showInfo("No profiles (views) found for this property: " + webPropertyId + " account id: " + acctId);
+                            ngScope().$apply(function ($s) { $s.loading = false; });
                         }
                     });
                 } else {
                     showInfo("No properties found for this account: " + acctId);
+                    ngScope().$apply(function ($s) { $s.loading = false; });
                 }
             });
         } else {
             showInfo("No accounts found for this user.");
+            ngScope().$apply(function ($s) { $s.loading = false; });
         }
     });
 }

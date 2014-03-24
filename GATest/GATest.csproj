@@ -455,6 +455,7 @@
     <Content Include="Content\styles\sass\ie.scss" />
     <Content Include="Content\styles\sass\print.scss" />
     <Content Include="Content\styles\sass\screen.scss" />
+    <None Include="Properties\PublishProfiles\Local.pubxml" />
     <None Include="Scripts\jquery-2.1.0.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.0.js" />
     <Content Include="Scripts\jquery-2.1.0.min.js" />
